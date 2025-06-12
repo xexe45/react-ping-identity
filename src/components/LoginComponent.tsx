@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { authService } from '../services/authService';
+import AuthService from '../services/authService.ts';
 
 interface LoginComponentProps {
   onLoginSuccess: () => void;
@@ -8,6 +8,7 @@ interface LoginComponentProps {
 const LoginComponent: React.FC<LoginComponentProps> = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const authService = AuthService.getInstance();
 
   const handleLogin = async () => {
     setLoading(true);

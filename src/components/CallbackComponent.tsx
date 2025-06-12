@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/authService';
+import AuthService from '../services/authService.ts';
 
 interface CallbackComponentProps {
   onLoginSuccess: () => void;
@@ -10,6 +10,7 @@ const CallbackComponent: React.FC<CallbackComponentProps> = ({ onLoginSuccess })
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const authService = AuthService.getInstance();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -17,8 +18,17 @@ const CallbackComponent: React.FC<CallbackComponentProps> = ({ onLoginSuccess })
         setLoading(true);
         setError(null);
         
+        // Extraer parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        const state = urlParams.get('state');
+        
+        if (!code || !state) {
+          throw new Error('Parámetros de callback faltantes');
+        }
+        
         // Procesar el callback de autenticación
-        await authService.handleCallback();
+        await authService.handleCallback(code, state);
         
         // Notificar al componente padre que el login fue exitoso
         onLoginSuccess();

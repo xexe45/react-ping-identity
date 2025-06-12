@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { authService } from './services/authService';
-import LoginComponent from './components/LoginComponent';
-import Dashboard from './components/Dashboard';
-import CallbackComponent from './components/CallbackComponent';
+import AuthService from './services/authService.ts';
+import LoginComponent from './components/LoginComponent.tsx';
+import Dashboard from './components/Dashboard.tsx';
+import CallbackComponent from './components/CallbackComponent.tsx';
 
-const App: React.FC = () => {
+export const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
-        const authenticated = await authService.isAuthenticated();
+        const authenticated = AuthService.getInstance().isAuthenticated();
         setIsAuthenticated(authenticated);
       } catch (error) {
         console.error('Error checking authentication status:', error);
@@ -79,5 +79,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
 

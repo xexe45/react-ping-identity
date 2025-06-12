@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { pingConfig, pingEndpoints } from '../config/pingConfig';
+import { pingConfig, pingEndpoints } from '../config/pingConfig.ts';
 
 // Interfaces para manejar los datos de autenticación
 export interface UserProfile {

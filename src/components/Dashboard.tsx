@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { authService } from '../services/authService';
+import AuthService from '../services/authService.ts';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -18,6 +18,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const authService = AuthService.getInstance();
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -26,11 +27,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         setError(null);
         
         // Obtener información del usuario
-        const user = await authService.getUserInfo();
+        const user = authService.getUser();
         setUserInfo(user);
         
         // Obtener token de acceso
-        const token = await authService.getAccessToken();
+        const token = authService.getAccessToken();
         setAccessToken(token);
         
       } catch (error) {
@@ -58,8 +59,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const refreshToken = async () => {
     try {
       setLoading(true);
-      const newToken = await authService.getAccessToken(true); // forzar refresh
-      setAccessToken(newToken);
+      const success = await authService.refreshAccessToken();
+      if (success) {
+        const newToken = authService.getAccessToken();
+        setAccessToken(newToken);
+      } else {
+        setError('No se pudo actualizar el token.');
+      }
     } catch (error) {
       console.error('Error refreshing token:', error);
       setError('Error al actualizar el token.');
